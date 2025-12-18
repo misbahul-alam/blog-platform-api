@@ -20,7 +20,7 @@ async function main() {
     lastName: faker.person.lastName(),
     email: faker.internet.email().toLowerCase(),
     password: 'hashed_password_example',
-    role: faker.helpers.arrayElement(['admin', 'author', 'user'] as const),
+    role: faker.helpers.arrayElement(['admin', 'author', 'reader'] as const),
     avatar: faker.image.avatar(),
     bio: faker.lorem.sentence(),
     isVerified: true,

@@ -11,7 +11,7 @@ import {
   text,
 } from 'drizzle-orm/pg-core';
 import { posts, comments, bookmarks } from './schema';
-export const roleEnum = pgEnum('role', ['admin', 'author', 'user']);
+export const roleEnum = pgEnum('role', ['admin', 'author', 'reader']);
 export const users = pgTable(
   'users',
   {
@@ -19,7 +19,7 @@ export const users = pgTable(
     firstName: varchar('first_name', { length: 30 }).notNull(),
     lastName: varchar('last_name', { length: 30 }).notNull(),
     email: varchar('email', { length: 200 }).notNull().unique(),
-    role: roleEnum('role').default('user').notNull(),
+    role: roleEnum('role').default('reader').notNull(),
     avatar: varchar('avatar', { length: 200 }),
     bio: text('bio'),
     isVerified: boolean('is_verified').default(false).notNull(),
