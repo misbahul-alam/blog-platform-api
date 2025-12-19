@@ -17,7 +17,7 @@ async function bootstrap() {
         scheme: 'bearer',
         bearerFormat: 'JWT',
       },
-      'access_token',
+      'token',
     )
     .addServer('/api/v1')
     .build();

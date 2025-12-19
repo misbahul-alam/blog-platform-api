@@ -1,5 +1,5 @@
 CREATE TYPE "public"."post_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
-CREATE TYPE "public"."role" AS ENUM('admin', 'author', 'user');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('admin', 'author', 'reader');--> statement-breakpoint
 CREATE TABLE "bookmarks" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"user_id" integer NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE "users" (
 	"first_name" varchar(30) NOT NULL,
 	"last_name" varchar(30) NOT NULL,
 	"email" varchar(200) NOT NULL,
-	"role" "role" DEFAULT 'user' NOT NULL,
+	"role" "role" DEFAULT 'reader' NOT NULL,
 	"avatar" varchar(200),
 	"bio" text,
 	"is_verified" boolean DEFAULT false NOT NULL,

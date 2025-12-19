@@ -1,5 +1,5 @@
 {
-  "id": "8ed4093a-c77c-4522-8217-33295d0ea6b0",
+  "id": "34ee4035-2c4e-4282-9c2b-625e6b3d13d2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -607,7 +607,7 @@
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "default": "'user'"
+          "default": "'reader'"
         },
         "avatar": {
           "name": "avatar",
@@ -713,7 +713,7 @@
       "values": [
         "admin",
         "author",
-        "user"
+        "reader"
       ]
     }
   },

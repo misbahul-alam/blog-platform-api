@@ -13,6 +13,7 @@ import { users } from 'src/database/schema/users.schema';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { CustomJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
+import { Role } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +34,11 @@ export class AuthService {
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { sub: user.id, email: user.email };
+    const payload: CustomJwtPayload = {
+      sub: user.id.toString(),
+      email: user.email,
+      role: user.role as Role,
+    };
 
     const token = this.jwtService.sign(payload);
 
@@ -73,6 +78,7 @@ export class AuthService {
     const payload: CustomJwtPayload = {
       sub: newUser.id.toString(),
       email: newUser.email,
+      role: newUser.role as Role,
     };
     const token = this.jwtService.sign(payload);
 

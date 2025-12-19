@@ -27,12 +27,12 @@ export class CategoriesService {
       throw new ConflictException('Category with this slug already exists');
     }
 
-    const newCategory = await this.db
+    const newCategory = (await this.db
       .insert(categories)
       .values({ name, slug, parentId })
-      .returning();
+      .returning()) as any[];
 
-    if (newCategory.length === 0) {
+    if (newCategory.length !== 1) {
       throw new ConflictException('Failed to create category');
     }
 

@@ -30,7 +30,7 @@ async function main() {
     .values(usersToInsert)
     .returning()) as any[];
 
-  const categoriesToInsert = Array.from({ length: 20 }).map(() => {
+  const categoriesToInsert = Array.from({ length: 10 }).map(() => {
     const name = faker.commerce.department();
     return {
       name,
@@ -51,13 +51,19 @@ async function main() {
     'TypeScript',
     'Drizzle',
     'Postgres',
+    'NestJS',
+    'JavaScript',
+    'CSS',
+    'HTML',
+    'Web Development',
+    'Programming',
   ].map((name) => ({ name }));
   const insertedTags = (await db
     .insert(schema.tags)
     .values(tagsToInsert)
     .returning()) as any[];
 
-  const postsToInsert = Array.from({ length: 100 }).map(() => {
+  const postsToInsert = Array.from({ length: 150 }).map(() => {
     const title = faker.lorem.sentence();
     return {
       title,
