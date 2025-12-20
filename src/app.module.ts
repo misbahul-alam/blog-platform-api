@@ -6,9 +6,10 @@ import { PostsModule } from './modules/posts/posts.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { UsersModule } from './modules/users/users.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, AuthModule, PostsModule, CategoriesModule, BookmarksModule, UsersModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, AuthModule, PostsModule, CategoriesModule, BookmarksModule, UsersModule, CommentsModule],
   controllers: [],
   providers: [],
 })
