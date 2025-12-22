@@ -7,9 +7,10 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { UsersModule } from './modules/users/users.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, AuthModule, PostsModule, CategoriesModule, BookmarksModule, UsersModule, CommentsModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, AuthModule, PostsModule, CategoriesModule, BookmarksModule, UsersModule, CommentsModule, CloudinaryModule],
   controllers: [],
   providers: [],
 })
