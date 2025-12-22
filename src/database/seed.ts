@@ -5,11 +5,14 @@ import * as schema from './schema/schema';
 import 'dotenv/config';
 import { DrizzleDB } from './types/drizzle';
 
+const databaseURL = process.env.DATABASE_URL;
+if (!databaseURL) {
+  throw new Error('DATABASE_URL is not defined in environment variables');
+}
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL!,
+  connectionString: databaseURL,
 });
 
-console.log('URL' + process.env.DATABASE_URL!);
 const db = drizzle(pool, { schema }) as DrizzleDB;
 
 async function main() {
@@ -46,18 +49,18 @@ async function main() {
     .returning()) as any[];
 
   const tagsToInsert = [
-    'React',
-    'Node',
-    'TypeScript',
-    'Drizzle',
-    'Postgres',
-    'NestJS',
-    'JavaScript',
-    'CSS',
-    'HTML',
-    'Web Development',
-    'Programming',
-  ].map((name) => ({ name }));
+    { name: 'React', slug: 'react' },
+    { name: 'Node', slug: 'node' },
+    { name: 'TypeScript', slug: 'typescript' },
+    { name: 'Drizzle', slug: 'drizzle' },
+    { name: 'Postgres', slug: 'postgres' },
+    { name: 'NestJS', slug: 'nestjs' },
+    { name: 'JavaScript', slug: 'javascript' },
+    { name: 'CSS', slug: 'css' },
+    { name: 'HTML', slug: 'html' },
+    { name: 'Web Development', slug: 'web-development' },
+    { name: 'Programming', slug: 'programming' },
+  ];
   const insertedTags = (await db
     .insert(schema.tags)
     .values(tagsToInsert)

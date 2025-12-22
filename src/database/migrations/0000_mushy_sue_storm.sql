@@ -50,7 +50,9 @@ CREATE TABLE "posts" (
 CREATE TABLE "tags" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL
+	"slug" varchar(100) NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "tags_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
