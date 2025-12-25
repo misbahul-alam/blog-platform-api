@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -16,10 +17,6 @@ export class CreatePostDto {
   @IsString({ message: 'Slug must be a string' })
   slug: string;
 
-  @IsNotEmpty({ message: 'Image URL is required' })
-  @IsString({ message: 'Image URL must be a string' })
-  image: string;
-
   @IsNotEmpty({ message: 'Content is required' })
   @IsString({ message: 'Content must be a string' })
   content: string;
@@ -27,6 +24,7 @@ export class CreatePostDto {
   @IsString({ message: 'Excerpt must be a string' })
   excerpt?: string;
 
+  @Transform(({ value }) => Number(value))
   @IsNotEmpty({ message: 'Category ID is required' })
   @IsNumber({}, { message: 'Category ID must be a number' })
   categoryId: number;

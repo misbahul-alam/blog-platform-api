@@ -37,7 +37,7 @@ export class PostsController {
     @CurrentUser() user: AuthUser,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const authorId = +user.sub;
+    const authorId = user.id;
     return this.postsService.create(createPostDto, authorId, image);
   }
 

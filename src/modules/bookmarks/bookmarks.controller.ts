@@ -32,7 +32,7 @@ export class BookmarksController {
     @Body() createBookmarkDto: CreateBookmarkDto,
     @CurrentUser() user: AuthUser,
   ) {
-    const userId = +user.sub;
+    const userId = user.id;
     return this.bookmarksService.create(createBookmarkDto, userId);
   }
 
@@ -41,13 +41,13 @@ export class BookmarksController {
     @CurrentUser() user: AuthUser,
     @Query() paginationDto: PaginationDto,
   ) {
-    const userId = +user.sub;
+    const userId = user.id;
     return this.bookmarksService.findAll(userId, paginationDto);
   }
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
-    const userId = +user.sub;
+    const userId = user.id;
     return this.bookmarksService.remove(id, userId);
   }
 }

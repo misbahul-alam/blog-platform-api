@@ -26,7 +26,7 @@ export class CommentsController {
     @Body() createCommentDto: CreateCommentDto,
     @CurrentUser() user: AuthUser,
   ) {
-    const userId = +user.sub;
+    const userId = user.id;
     return this.commentsService.create(createCommentDto, userId);
   }
 
@@ -37,14 +37,14 @@ export class CommentsController {
     @Body() updateCommentDto: UpdateCommentDto,
     @CurrentUser() user: AuthUser,
   ) {
-    const userId = +user.sub;
-    return this.commentsService.update(+id, updateCommentDto, userId);
+    const userId = user.id;
+    return this.commentsService.update(id, updateCommentDto, userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
-    const userId = +user.sub;
+    const userId = user.id;
     return this.commentsService.remove(id, userId);
   }
 }

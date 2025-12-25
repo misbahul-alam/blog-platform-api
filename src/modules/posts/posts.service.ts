@@ -12,6 +12,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { eq } from 'drizzle-orm';
 import { posts } from 'src/database/schema/posts.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { categories } from 'src/database/schema/categories.schema';
 
 @Injectable()
 export class PostsService {
@@ -25,9 +26,10 @@ export class PostsService {
     image: Express.Multer.File,
   ) {
     const { title, slug, content, excerpt, categoryId, status } = createPostDto;
+    console.log('Creating post with data:', createPostDto);
 
     const categoryExists = await this.db.query.categories.findFirst({
-      where: eq(posts.categoryId, categoryId),
+      where: eq(categories.id, categoryId),
     });
 
     if (!categoryExists) {
