@@ -15,7 +15,9 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import type { AuthUser } from 'src/common/types/auth-user.types';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Comments')
 @Controller('comments')
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}

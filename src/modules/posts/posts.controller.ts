@@ -23,7 +23,9 @@ import { Role } from 'src/common/enums/role.enum';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import type { AuthUser } from 'src/common/types/auth-user.types';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Posts')
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}

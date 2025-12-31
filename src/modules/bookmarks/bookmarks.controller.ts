@@ -20,7 +20,9 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import type { AuthUser } from 'src/common/types/auth-user.types';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Bookmarks')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.admin, Role.author, Role.reader)
 @Controller('bookmarks')
