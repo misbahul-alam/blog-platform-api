@@ -23,7 +23,14 @@ import { Role } from 'src/common/enums/role.enum';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import type { AuthUser } from 'src/common/types/auth-user.types';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -34,6 +41,30 @@ export class PostsController {
   @Roles(Role.admin, Role.author)
   @UseInterceptors(FileInterceptor('image'))
   @Post()
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Create a new post' })
+  @ApiResponse({ status: 201, description: 'Post created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        slug: { type: 'string' },
+        content: { type: 'string' },
+        excerpt: { type: 'string' },
+        categoryId: { type: 'integer' },
+        status: { type: 'string', enum: ['draft', 'published', 'archived'] },
+        image: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   create(
     @Body() createPostDto: CreatePostDto,
     @CurrentUser() user: AuthUser,
@@ -44,16 +75,24 @@ export class PostsController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all posts' })
+  @ApiResponse({ status: 200, description: 'Return all posts' })
   findAll(@Query() paginationDto: PaginationDto) {
     return this.postsService.findAll(paginationDto);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get post by ID' })
+  @ApiResponse({ status: 200, description: 'Return the post' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.findOne(id);
   }
 
   @Get('slug/:slug')
+  @ApiOperation({ summary: 'Get post by slug' })
+  @ApiResponse({ status: 200, description: 'Return the post' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   findBySlug(@Param('slug') slug: string) {
     return this.postsService.findOneBySlug(slug);
   }
@@ -62,6 +101,13 @@ export class PostsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin, Role.author)
   @UseInterceptors(FileInterceptor('image'))
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Update a post' })
+  @ApiResponse({ status: 200, description: 'Post updated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
@@ -73,6 +119,12 @@ export class PostsController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin, Role.author)
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Delete a post' })
+  @ApiResponse({ status: 200, description: 'Post deleted successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.remove(id);
   }

@@ -20,9 +20,15 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import type { AuthUser } from 'src/common/types/auth-user.types';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Bookmarks')
+@ApiBearerAuth('token')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.admin, Role.author, Role.reader)
 @Controller('bookmarks')
@@ -30,6 +36,11 @@ export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Bookmark a post' })
+  @ApiResponse({ status: 201, description: 'Post bookmarked successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 409, description: 'Conflict (Already bookmarked)' })
   create(
     @Body() createBookmarkDto: CreateBookmarkDto,
     @CurrentUser() user: AuthUser,
@@ -39,6 +50,9 @@ export class BookmarksController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all bookmarks for current user' })
+  @ApiResponse({ status: 200, description: 'Return all bookmarks' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   findAll(
     @CurrentUser() user: AuthUser,
     @Query() paginationDto: PaginationDto,
@@ -48,6 +62,10 @@ export class BookmarksController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Remove a bookmark' })
+  @ApiResponse({ status: 200, description: 'Bookmark removed successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Bookmark not found' })
   remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
     const userId = user.id;
     return this.bookmarksService.remove(id, userId);

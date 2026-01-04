@@ -15,7 +15,12 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import type { AuthUser } from 'src/common/types/auth-user.types';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Comments')
 @Controller('comments')
@@ -24,6 +29,11 @@ export class CommentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Create a new comment' })
+  @ApiResponse({ status: 201, description: 'Comment created successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   create(
     @Body() createCommentDto: CreateCommentDto,
     @CurrentUser() user: AuthUser,
@@ -34,6 +44,13 @@ export class CommentsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Update a comment' })
+  @ApiResponse({ status: 200, description: 'Comment updated successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto,
@@ -45,8 +62,22 @@ export class CommentsController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Delete a comment' })
+  @ApiResponse({ status: 200, description: 'Comment deleted successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'Comment not found' })
   remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
     const userId = user.id;
     return this.commentsService.remove(id, userId);
+  }
+
+  @Get('post/:postId')
+  @ApiOperation({ summary: 'Get all comments for a post' })
+  @ApiResponse({ status: 200, description: 'Return all comments for the post' })
+  @ApiResponse({ status: 404, description: 'Post not found' })
+  findAll(@Param('postId', ParseIntPipe) postId: number) {
+    return this.commentsService.findAll(postId);
   }
 }
