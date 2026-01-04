@@ -15,7 +15,7 @@ import { and, eq } from 'drizzle-orm';
 export class BookmarksService {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
   async create(dto: CreateBookmarkDto, userId: number) {
-    const postId = dto.id;
+    const postId = dto.postId;
 
     const post = await this.db.query.posts.findFirst({
       where: eq(posts.id, postId),
@@ -49,6 +49,9 @@ export class BookmarksService {
 
     const bookmarkList = await this.db.query.bookmarks.findMany({
       where: eq(bookmarks.userId, userId),
+      with: {
+        post: true,
+      },
       limit,
       offset: (page - 1) * limit,
     });

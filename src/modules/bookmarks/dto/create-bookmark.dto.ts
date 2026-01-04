@@ -1,3 +1,7 @@
+import { IsInt, IsNotEmpty } from 'class-validator';
+
 export class CreateBookmarkDto {
-  id: number;
+  @IsNotEmpty()
+  @IsInt()
+  postId: number;
 }

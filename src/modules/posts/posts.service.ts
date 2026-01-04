@@ -26,7 +26,6 @@ export class PostsService {
     image: Express.Multer.File,
   ) {
     const { title, slug, content, excerpt, categoryId, status } = createPostDto;
-    console.log('Creating post with data:', createPostDto);
 
     const categoryExists = await this.db.query.categories.findFirst({
       where: eq(categories.id, categoryId),
@@ -93,7 +92,6 @@ export class PostsService {
       offset: (page - 1) * limit,
     });
 
-    console.log(posts);
     const formattedPosts = posts.map((post) => ({
       ...post,
       tags: post.tags.map((t) => t.tag),

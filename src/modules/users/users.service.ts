@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { DRIZZLE } from 'src/database/database.module';
 import { users } from 'src/database/schema/users.schema';
@@ -28,10 +28,23 @@ export class UsersService {
       where: eq(users.id, id),
       columns: { id: true, email: true, role: true, createdAt: true },
     });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
     return user;
   }
 
   async deleteUser(id: number) {
+    const user = await this.db.query.users.findFirst({
+      where: eq(users.id, id),
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
     await this.db.delete(users).where(eq(users.id, id));
     return { message: 'User deleted successfully' };
   }
@@ -39,7 +52,7 @@ export class UsersService {
   async updateProfile(id: number, updateUserDto: UpdateUserDto) {
     const { firstName, lastName, email, bio } = updateUserDto;
 
-    const updatedUser = await this.db
+    const [updatedUser] = await this.db
       .update(users)
       .set({
         firstName: firstName,
@@ -47,7 +60,8 @@ export class UsersService {
         email: email,
         bio: bio,
       })
-      .where(eq(users.id, id));
+      .where(eq(users.id, id))
+      .returning();
 
     return { message: 'Profile updated successfully', user: updatedUser };
   }
