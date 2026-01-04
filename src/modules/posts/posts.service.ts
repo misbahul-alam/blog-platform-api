@@ -120,6 +120,7 @@ export class PostsService {
             tag: { columns: { name: true, slug: true } },
           },
         },
+        comments: true,
       },
     });
 
@@ -145,6 +146,7 @@ export class PostsService {
             tag: { columns: { name: true, slug: true } },
           },
         },
+        comments: true,
       },
     });
 
