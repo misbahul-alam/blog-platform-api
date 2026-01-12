@@ -8,9 +8,21 @@ import { BookmarksModule } from './modules/bookmarks/bookmarks.module';
 import { UsersModule } from './modules/users/users.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { TagsModule } from './modules/tags/tags.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, AuthModule, PostsModule, CategoriesModule, BookmarksModule, UsersModule, CommentsModule, CloudinaryModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    AuthModule,
+    PostsModule,
+    CategoriesModule,
+    BookmarksModule,
+    UsersModule,
+    CommentsModule,
+    CloudinaryModule,
+    TagsModule,
+  ],
   controllers: [],
   providers: [],
 })
