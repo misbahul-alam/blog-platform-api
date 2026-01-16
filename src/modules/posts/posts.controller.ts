@@ -42,11 +42,18 @@ export class PostsController {
   @UseInterceptors(FileInterceptor('image'))
   @Post()
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Create a new post' })
+  @ApiOperation({
+    summary: 'Create a new post',
+    description:
+      'Creates a new blog post. Requires Admin or Author role. Logic includes uploading an optional cover image.',
+  })
   @ApiResponse({ status: 201, description: 'Post created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - User does not have required role',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -75,7 +82,11 @@ export class PostsController {
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Search posts' })
+  @ApiOperation({
+    summary: 'Search posts',
+    description:
+      'Search for posts by keyword in title or content (full-text search implementation).',
+  })
   @ApiResponse({ status: 200, description: 'Return search results' })
   search(@Query('q') query: string) {
     return this.postsService.search(query);
@@ -85,8 +96,11 @@ export class PostsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin, Role.author, Role.reader)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Toggle like on a post' })
-  @ApiResponse({ status: 200, description: 'Like toggled' })
+  @ApiOperation({
+    summary: 'Toggle like on a post',
+    description: 'Add or remove a like from a post for the current user.',
+  })
+  @ApiResponse({ status: 200, description: 'Like toggled successfully' })
   toggleLike(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: AuthUser,

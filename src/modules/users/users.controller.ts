@@ -32,7 +32,11 @@ export class UsersController {
 
   @Roles(Role.admin, Role.author, Role.reader)
   @Get('me')
-  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiOperation({
+    summary: 'Get current user profile',
+    description:
+      'Retrieves the profile information of the currently authenticated user.',
+  })
   @ApiResponse({ status: 200, description: 'Return current user profile' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   getProfile(@CurrentUser() user: AuthUser) {
@@ -41,7 +45,10 @@ export class UsersController {
 
   @Patch('me')
   @Roles(Role.admin, Role.author, Role.reader)
-  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiOperation({
+    summary: 'Update current user profile',
+    description: "Updates the authenticated user's profile details.",
+  })
   @ApiResponse({ status: 200, description: 'Profile updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -54,7 +61,11 @@ export class UsersController {
 
   @Get('admin/stats')
   @Roles(Role.admin)
-  @ApiOperation({ summary: 'Get admin stats' })
+  @ApiOperation({
+    summary: 'Get admin stats',
+    description:
+      'Retrieves system-wide statistics for administrators (e.g., total users, posts).',
+  })
   @ApiResponse({ status: 200, description: 'Return stats' })
   getAdminStats() {
     return this.usersService.getAdminStats();
@@ -62,7 +73,10 @@ export class UsersController {
 
   @Get('public/:id')
   @Roles(Role.admin, Role.author, Role.reader)
-  @ApiOperation({ summary: 'Get public profile' })
+  @ApiOperation({
+    summary: 'Get public profile',
+    description: 'Retrieves the public profile of a user by their unique ID.',
+  })
   @ApiResponse({ status: 200, description: 'Return user profile' })
   getPublicProfile(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.getPublicProfile(id);
@@ -70,7 +84,11 @@ export class UsersController {
 
   @Get()
   @Roles(Role.admin)
-  @ApiOperation({ summary: 'Get all users (Admin only)' })
+  @ApiOperation({
+    summary: 'Get all users (Admin only)',
+    description:
+      'Retrieves a list of all registered users. Restricted to Admins.',
+  })
   @ApiResponse({ status: 200, description: 'Return all users' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })

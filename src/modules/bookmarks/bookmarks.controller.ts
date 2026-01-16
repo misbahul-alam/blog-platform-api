@@ -36,7 +36,10 @@ export class BookmarksController {
   constructor(private readonly bookmarksService: BookmarksService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Bookmark a post' })
+  @ApiOperation({
+    summary: 'Bookmark a post',
+    description: 'Saves a post to the authenticated user bookmarks.',
+  })
   @ApiResponse({ status: 201, description: 'Post bookmarked successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -50,7 +53,11 @@ export class BookmarksController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all bookmarks for current user' })
+  @ApiOperation({
+    summary: 'Get all bookmarks for current user',
+    description:
+      'Retrieves a paginated list of posts bookmarked by the current user.',
+  })
   @ApiResponse({ status: 200, description: 'Return all bookmarks' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findAll(
@@ -62,7 +69,10 @@ export class BookmarksController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Remove a bookmark' })
+  @ApiOperation({
+    summary: 'Remove a bookmark',
+    description: 'Deletes a specific bookmark by its ID.',
+  })
   @ApiResponse({ status: 200, description: 'Bookmark removed successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'Bookmark not found' })

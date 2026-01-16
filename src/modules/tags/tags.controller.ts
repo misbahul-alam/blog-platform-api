@@ -34,7 +34,10 @@ export class TagsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Create a new tag (Admin only)' })
+  @ApiOperation({
+    summary: 'Create a new tag (Admin only)',
+    description: 'Creates a new unique tag. Restricted to Administrators.',
+  })
   @ApiResponse({ status: 201, description: 'Tag created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -45,14 +48,20 @@ export class TagsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all tags' })
+  @ApiOperation({
+    summary: 'Get all tags',
+    description: 'Retrieves all available tags, optionally paginated.',
+  })
   @ApiResponse({ status: 200, description: 'Return all tags' })
   findAll(@Query() paginationDto: PaginationDto) {
     return this.tagsService.findAll(paginationDto);
   }
 
   @Get('slug/:slug')
-  @ApiOperation({ summary: 'Get tag by slug' })
+  @ApiOperation({
+    summary: 'Get tag by slug',
+    description: 'Retrieves tag details by its URL-friendly slug.',
+  })
   @ApiResponse({ status: 200, description: 'Return the tag' })
   @ApiResponse({ status: 404, description: 'Tag not found' })
   findOneBySlug(@Param('slug') slug: string) {
@@ -60,7 +69,10 @@ export class TagsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get tag by ID' })
+  @ApiOperation({
+    summary: 'Get tag by ID',
+    description: 'Retrieves tag details by its numeric ID.',
+  })
   @ApiResponse({ status: 200, description: 'Return the tag' })
   @ApiResponse({ status: 404, description: 'Tag not found' })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -71,7 +83,11 @@ export class TagsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Update a tag (Admin only)' })
+  @ApiOperation({
+    summary: 'Update a tag (Admin only)',
+    description:
+      'Updates tag details (e.g. name, slug). Restricted to Administrators.',
+  })
   @ApiResponse({ status: 200, description: 'Tag updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -89,7 +105,10 @@ export class TagsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Delete a tag (Admin only)' })
+  @ApiOperation({
+    summary: 'Delete a tag (Admin only)',
+    description: 'Permanently deletes a tag. Admin access required.',
+  })
   @ApiResponse({ status: 200, description: 'Tag deleted successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })

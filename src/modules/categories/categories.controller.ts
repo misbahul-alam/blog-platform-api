@@ -32,7 +32,10 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Create a new category (Admin only)' })
+  @ApiOperation({
+    summary: 'Create a new category (Admin only)',
+    description: 'Creates a new post category. Restricted to Administrators.',
+  })
   @ApiResponse({ status: 201, description: 'Category created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -43,14 +46,20 @@ export class CategoriesController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all categories' })
+  @ApiOperation({
+    summary: 'Get all categories',
+    description: 'Retrieves a list of all available categories.',
+  })
   @ApiResponse({ status: 200, description: 'Return all categories' })
   findAll() {
     return this.categoriesService.findAll();
   }
 
   @Get('slug/:slug')
-  @ApiOperation({ summary: 'Get category by slug' })
+  @ApiOperation({
+    summary: 'Get category by slug',
+    description: 'Retrieves category details using its unique slug.',
+  })
   @ApiResponse({ status: 200, description: 'Return the category' })
   @ApiResponse({ status: 404, description: 'Category not found' })
   findOneBySlug(@Param('slug') slug: string) {
@@ -58,7 +67,10 @@ export class CategoriesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get category by ID' })
+  @ApiOperation({
+    summary: 'Get category by ID',
+    description: 'Retrieves category details using its numeric ID.',
+  })
   @ApiResponse({ status: 200, description: 'Return the category' })
   @ApiResponse({ status: 404, description: 'Category not found' })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -69,7 +81,11 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Update a category (Admin only)' })
+  @ApiOperation({
+    summary: 'Update a category (Admin only)',
+    description:
+      'Updates category details (e.g. name, slug). Restricted to Administrators.',
+  })
   @ApiResponse({ status: 200, description: 'Category updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -86,7 +102,10 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Delete a category (Admin only)' })
+  @ApiOperation({
+    summary: 'Delete a category (Admin only)',
+    description: 'Deletes a category permanetly. Restricted to Administrators.',
+  })
   @ApiResponse({ status: 200, description: 'Category deleted successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })

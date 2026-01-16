@@ -30,7 +30,11 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Create a new comment' })
+  @ApiOperation({
+    summary: 'Create a new comment',
+    description:
+      'Adds a new comment to a post. Can also be a reply to another comment if parentId is provided.',
+  })
   @ApiResponse({ status: 201, description: 'Comment created successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -45,7 +49,10 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Post(':id/like')
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Toggle like on a comment' })
+  @ApiOperation({
+    summary: 'Toggle like on a comment',
+    description: 'Likes or unlikes a specific comment for the current user.',
+  })
   @ApiResponse({ status: 200, description: 'Like toggled' })
   toggleLike(
     @Param('id', ParseIntPipe) id: number,
@@ -57,7 +64,11 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Update a comment' })
+  @ApiOperation({
+    summary: 'Update a comment',
+    description:
+      'Updates the content of an existing comment. Only allowable by the comment author.',
+  })
   @ApiResponse({ status: 200, description: 'Comment updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -75,7 +86,11 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Delete a comment' })
+  @ApiOperation({
+    summary: 'Delete a comment',
+    description:
+      'Deletes a comment. Users can delete their own comments; Admins can delete any.',
+  })
   @ApiResponse({ status: 200, description: 'Comment deleted successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -86,7 +101,10 @@ export class CommentsController {
   }
 
   @Get('post/:postId')
-  @ApiOperation({ summary: 'Get all comments for a post' })
+  @ApiOperation({
+    summary: 'Get all comments for a post',
+    description: 'Retrieves all comments associated with a specific post.',
+  })
   @ApiResponse({ status: 200, description: 'Return all comments for the post' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   findAll(@Param('postId', ParseIntPipe) postId: number) {

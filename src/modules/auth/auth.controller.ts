@@ -48,15 +48,22 @@ export class AuthController {
   }
 
   @Post('verify-email')
-  @ApiOperation({ summary: 'Verify email address' })
+  @ApiOperation({
+    summary: 'Verify email address',
+    description: 'Verifies user account using the token sent via email.',
+  })
   @ApiResponse({ status: 200, description: 'Email verified successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid token' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired token' })
   verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
     return this.authService.verifyEmail(verifyEmailDto.token);
   }
 
   @Post('resend-verification')
-  @ApiOperation({ summary: 'Resend verification email' })
+  @ApiOperation({
+    summary: 'Resend verification email',
+    description:
+      'Resends the verification email if the user is not yet verified.',
+  })
   @ApiResponse({ status: 200, description: 'Verification email sent' })
   resendVerification(@Body() resendVerificationDto: ResendVerificationDto) {
     return this.authService.resendVerificationEmail(
@@ -67,7 +74,11 @@ export class AuthController {
   @Patch('change-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('token')
-  @ApiOperation({ summary: 'Change password' })
+  @ApiOperation({
+    summary: 'Change password',
+    description:
+      'Allows logged-in users to change their password provided they know the old one.',
+  })
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   changePassword(
@@ -78,8 +89,15 @@ export class AuthController {
   }
 
   @Post('forgot-password')
-  @ApiOperation({ summary: 'Request password reset' })
-  @ApiResponse({ status: 200, description: 'Reset token generated' })
+  @ApiOperation({
+    summary: 'Request password reset',
+    description:
+      'Initiates password recovery process. Sends an email with a reset token.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reset email sent if account exists',
+  })
   forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     return this.authService.forgotPassword(forgotPasswordDto);
   }
