@@ -4,26 +4,89 @@ A scalable and robust RESTful API for a blog platform built with [NestJS](https:
 
 ## 🚀 Features
 
-- **Authentication & Authorization**: JWT-based auth with Role-Based Access Control (RBAC).
-- **User Management**: User registration, profile management.
-- **Blog Posts**: Create, read, update, and delete posts with tags and categories.
-- **Comments**: Commenting system for posts.
-- **Bookmarks**: Bookmark favorite posts.
-- **Categories & Tags**: Organize content efficiently.
-- **Media Upload**: Image upload support using Cloudinary.
-- **Pagination**: Efficient data retrieval with pagination support.
-- **API Documentation**: Interactive API docs using Scalar/Swagger.
+- **🔐 Authentication & Authorization**:
+  - JWT-based authentication
+  - Role-Based Access Control (Admin, Author, Reader)
+  - Account verification via email
+  - Password reset flows
+- **👥 User Management**:
+  - Public & Private profiles
+  - Avatar uploads (Cloudinary)
+  - Admin dashboard stats
+- **📝 Content Management**:
+  - **Posts**: Rich CRUD operations, Cover images, Full-text Search over titles/content.
+  - **Taxonomy**: Categories and Tags management.
+  - **Status**: Draft, Published, Archived workflows.
+- **💬 Engagement**:
+  - **Comments**: Nested/Threaded comments system.
+  - **Reactions**: Like system for Posts and Comments.
+  - **Bookmarks**: Save posts for later.
+  - **Views**: Track post view counts.
+- **📢 Communication**:
+  - **Newsletters**: Subscription management and email handling.
+  - **Contact Form**: Direct inquiries sent to admins via email.
+- **🛡️ Moderation**:
+  - Report system for Posts, Comments, and Users.
+- **⚙️ Technical Features**:
+  - **Media**: Optimized image uploads via Cloudinary.
+  - **Security**: Helmet, Rate Limiting (Throttler), Compression.
+  - **Docs**: Interactive API documentation via Scalar.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [NestJS](https://nestjs.com/)
-- **Database**: PostgreSQL
+- **Framework**: [NestJS 11](https://nestjs.com/)
+- **Language**: TypeScript
+- **Database**: PostgreSQL (NeonDB recommended)
 - **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
-- **Validation**: class-validator, class-transformer
-- **Documentation**: Swagger & Scalar
+- **Mail**: Nodemailer
+- **Storage**: Cloudinary
+- **Documentation**: @scalar/nestjs-api-reference
 - **Package Manager**: pnpm
 
-## 📋 Prerequisites
+## � Project Structure
+
+```bash
+src/
+├── common/             # Shared guards, decorators, filters, types
+│   ├── decorators/     # Custom decorators (@CurrentUser, @Roles)
+│   ├── guards/         # Auth & Roles guards
+│   ├── swagger/        # Swagger/Scalar configuration
+│   └── ...
+├── database/           # Drizzle ORM configuration
+│   ├── migrations/     # SQL migration files
+│   └── schema/         # Database schema definitions
+├── modules/            # Feature modules
+│   ├── auth/           # Authentication & Account verification
+│   ├── posts/          # Blog posts logic
+│   ├── users/          # User management
+│   ├── comments/       # Commenting system
+│   ├── mail/           # Email service (Nodemailer)
+│   └── ...
+├── app.module.ts       # Main application module
+└── main.ts             # Application entry point
+```
+
+## 🔐 Role-Based Access Control (RBAC)
+
+The system supports three user roles with hierarchical permissions:
+
+- **👑 Admin (`admin`)**:
+  - Full system access.
+  - Manage all Users, Posts, Comments, Categories, and Tags.
+  - View System Stats and Reports.
+  - Manage Newsletters.
+- **✍️ Author (`author`)**:
+  - Create and Manage their own Posts.
+  - Upload media.
+  - Manage comments on their posts.
+- **📖 Reader (`reader`)** (Default):
+  - Read posts and comments.
+  - Comment on posts.
+  - Bookmark posts.
+  - Like/React to content.
+  - Report content.
+
+## �📋 Prerequisites
 
 Ensure you have the following installed:
 
@@ -47,18 +110,28 @@ Ensure you have the following installed:
    ```
 
 3. Configure environment variables:
-   Create a `.env` file in the root directory and add the following:
 
-   ```env
-   PORT=3000
-   DATABASE_URL=
-   JWT_SECRET=
+   Copy the example file to create your own configuration:
 
-   # Cloudinary Configuration
-   CLOUDINARY_CLOUD_NAME=
-   CLOUDINARY_API_KEY=
-   CLOUDINARY_API_SECRET=
+   ```bash
+   cp .env.example .env
    ```
+
+   **Configuration Reference:**
+
+   | Variable                | Description                        | Example                          |
+   | ----------------------- | ---------------------------------- | -------------------------------- |
+   | `PORT`                  | Application port                   | `3000`                           |
+   | `NODE_ENV`              | Environment mode                   | `development` / `production`     |
+   | `FRONTEND_URL`          | Frontend App URL (for email links) | `http://localhost:3000`          |
+   | `DATABASE_URL`          | PostgreSQL connection string       | `postgresql://user:pass@host/db` |
+   | `JWT_SECRET`            | Secret key for signing tokens      | `supersecr3t`                    |
+   | `CLOUDINARY_NAME`       | Cloudinary Cloud Name              | `my-cloud`                       |
+   | `CLOUDINARY_API_KEY`    | Cloudinary API Key                 | `123456...`                      |
+   | `CLOUDINARY_API_SECRET` | Cloudinary Secret                  | `abcde...`                       |
+   | `SMTP_HOST`             | Mail server host                   | `smtp.gmail.com`                 |
+   | `SMTP_USER`             | Mail server username               | `user@gmail.com`                 |
+   | `SMTP_PASS`             | Mail server password               | `app-specific-password`          |
 
 ## 🗄️ Database Setup
 
@@ -73,10 +146,10 @@ This project uses Drizzle ORM for database management.
 2. **Run Migrations**:
 
    ```bash
-   pnpm run drrizzle:migrate
+   pnpm run drizzle:migrate
    ```
 
-   _(Note: Check `package.json` for the exact script name, it appears as `drrizzle:migrate` currently)_
+   _Applies the generated SQL changes to your connected database._
 
 3. **Seed Database** (Optional):
    ```bash
@@ -104,7 +177,7 @@ Once the application is running, you can access the interactive API documentatio
 http://localhost:3000/docs
 ```
 
-The API is globally prefixed with `/api/v1`.
+The documentation is powered by Scalar and provides a comprehensive view of all endpoints, schemas, and authentication methods.
 
 ## 🧪 Testing
 
@@ -118,3 +191,18 @@ pnpm run test:e2e
 # test coverage
 pnpm run test:cov
 ```
+
+## ❓ Troubleshooting
+
+**Migration Conflicts:**
+If you encounter `relation "table" already exists` errors during migration:
+
+1. Ensure your local DB is clean or matches the migration state.
+2. Use `pnpm run drizzle:push` to sync without creating a migration file if in early dev.
+
+**Scalar Docs White Screen:**
+Ensure `helmet` content security policy is correctly configured to allow inline scripts, or disabled for the docs path. This project already handles this in `main.ts`.
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
