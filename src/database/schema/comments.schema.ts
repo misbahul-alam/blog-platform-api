@@ -19,6 +19,7 @@ export const comments = pgTable(
     userId: integer('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
+    parentId: integer('parent_id'),
     content: text('content').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
@@ -26,6 +27,7 @@ export const comments = pgTable(
     return {
       postIndex: index('comments_post_id_index').on(table.postId),
       userIndex: index('comments_user_id_index').on(table.userId),
+      parentIndex: index('comments_parent_id_index').on(table.parentId),
     };
   },
 );
@@ -34,6 +36,14 @@ export const commentRelations = relations(comments, ({ one, many }) => ({
   post: one(posts, {
     fields: [comments.postId],
     references: [posts.id],
+  }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+    relationName: 'parent_child',
+  }),
+  children: many(comments, {
+    relationName: 'parent_child',
   }),
   user: one(users, {
     fields: [comments.userId],

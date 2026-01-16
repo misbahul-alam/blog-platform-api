@@ -15,6 +15,13 @@
       "when": 1768557237619,
       "tag": "0001_bitter_captain_cross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1768558790313,
+      "tag": "0002_freezing_blazing_skull",
+      "breakpoints": true
     }
   ]
 }

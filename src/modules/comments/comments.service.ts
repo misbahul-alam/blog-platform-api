@@ -17,7 +17,7 @@ export class CommentsService {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
   async create(createCommentDto: CreateCommentDto, userId: number) {
-    const { content, postId } = createCommentDto;
+    const { content, postId, parentId } = createCommentDto;
 
     const post = await this.db.query.posts.findFirst({
       where: eq(posts.id, postId),
@@ -27,12 +27,22 @@ export class CommentsService {
       throw new NotFoundException('Post not found');
     }
 
+    if (parentId) {
+      const parentComment = await this.db.query.comments.findFirst({
+        where: eq(comments.id, parentId),
+      });
+      if (!parentComment) {
+        throw new NotFoundException('Parent comment not found');
+      }
+    }
+
     const [comment] = await this.db
       .insert(comments)
       .values({
         content,
         postId,
         userId,
+        parentId,
       })
       .returning();
 

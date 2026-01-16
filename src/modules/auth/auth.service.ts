@@ -22,12 +22,14 @@ import {
   ResetPasswordDto,
 } from './dto/password.dto';
 import * as crypto from 'crypto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(DRIZZLE) private readonly db: DrizzleDB,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async login(loginDto: LoginDto) {
@@ -73,6 +75,7 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString('hex');
 
     const [newUser] = await this.db
       .insert(users)
@@ -81,8 +84,12 @@ export class AuthService {
         lastName,
         email,
         password: hashedPassword,
+        verificationToken,
       })
       .returning();
+
+    // Send verification email
+    await this.mailService.sendVerificationEmail(email, verificationToken);
 
     const payload: CustomJwtPayload = {
       sub: newUser.id.toString(),
@@ -92,10 +99,50 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
 
     return {
-      message: 'User registered successfully',
+      message:
+        'User registered successfully. Please check your email to verify your account.',
       token,
-      user: { ...newUser, password: undefined },
+      user: { ...newUser, password: undefined, verificationToken: undefined },
     };
+  }
+
+  async verifyEmail(token: string) {
+    const user = await this.db.query.users.findFirst({
+      where: eq(users.verificationToken, token),
+    });
+
+    if (!user) throw new BadRequestException('Invalid verification token');
+
+    await this.db
+      .update(users)
+      .set({
+        isVerified: true,
+        verificationToken: null,
+      })
+      .where(eq(users.id, user.id));
+
+    return { message: 'Email verified successfully' };
+  }
+
+  async resendVerificationEmail(email: string) {
+    const user = await this.db.query.users.findFirst({
+      where: eq(users.email, email),
+    });
+
+    if (!user) throw new NotFoundException('User not found');
+    if (user.isVerified)
+      throw new BadRequestException('Email already verified');
+
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    await this.db
+      .update(users)
+      .set({ verificationToken })
+      .where(eq(users.id, user.id));
+
+    await this.mailService.sendVerificationEmail(user.email, verificationToken);
+
+    return { message: 'Verification email sent' };
   }
 
   async changePassword(userId: number, dto: ChangePasswordDto) {
@@ -133,10 +180,11 @@ export class AuthService {
       })
       .where(eq(users.id, user.id));
 
-    // In a real app, send email here.
+    // Send email
+    await this.mailService.sendPasswordResetEmail(user.email, token);
+
     return {
-      message: 'Password reset token generated (simulated email sent)',
-      resetToken: token, // Returning for testing purposes
+      message: 'Password reset token generated and email sent',
     };
   }
 

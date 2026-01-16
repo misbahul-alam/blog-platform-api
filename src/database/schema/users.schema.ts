@@ -23,6 +23,7 @@ export const users = pgTable(
     avatar: varchar('avatar', { length: 200 }),
     bio: text('bio'),
     isVerified: boolean('is_verified').default(false).notNull(),
+    verificationToken: varchar('verification_token', { length: 255 }),
     password: text('password').notNull(),
     resetPasswordToken: varchar('reset_password_token', { length: 255 }),
     resetPasswordExpires: timestamp('reset_password_expires'),

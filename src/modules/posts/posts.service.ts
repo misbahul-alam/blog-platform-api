@@ -9,7 +9,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { DRIZZLE } from 'src/database/database.module';
 import type { DrizzleDB } from 'src/database/types/drizzle';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { eq, ilike, or, and } from 'drizzle-orm';
+import { sql, eq, ilike, or, and } from 'drizzle-orm';
 import { posts } from 'src/database/schema/posts.schema';
 import { postLikes } from 'src/database/schema/likes.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -167,6 +167,12 @@ export class PostsService {
       throw new NotFoundException({ message: `Post with ID ${id} not found` });
     }
 
+    // Increment views
+    await this.db
+      .update(posts)
+      .set({ views: sql`${posts.views} + 1` })
+      .where(eq(posts.id, id));
+
     return { ...post, tags: post.tags.map((t) => t.tag) };
   }
 
@@ -194,6 +200,12 @@ export class PostsService {
         message: `Post with slug ${slug} not found`,
       });
     }
+
+    // Increment views
+    await this.db
+      .update(posts)
+      .set({ views: sql`${posts.views} + 1` })
+      .where(eq(posts.id, post.id));
 
     return {
       ...post,
