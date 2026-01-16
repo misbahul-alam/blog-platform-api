@@ -21,6 +21,7 @@
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:push": "drizzle-kit push",
+    "drizzle:studio": "drizzle-kit studio",
     "drizzle:reset": "drizzle-kit reset",
     "drizzle:seed": "ts-node src/database/seed.ts"
   },
@@ -99,6 +100,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    }
   }
 }

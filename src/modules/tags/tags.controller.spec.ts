@@ -5,7 +5,7 @@ import { TagsService } from './tags.service';
 describe('TagsController', () => {
   let controller: TagsController;
 
-  const mockTagsService = {
+  const mockService = {
     create: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
@@ -17,12 +17,7 @@ describe('TagsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TagsController],
-      providers: [
-        {
-          provide: TagsService,
-          useValue: mockTagsService,
-        },
-      ],
+      providers: [{ provide: TagsService, useValue: mockService }],
     }).compile();
 
     controller = module.get<TagsController>(TagsController);

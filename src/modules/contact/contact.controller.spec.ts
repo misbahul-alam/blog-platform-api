@@ -5,10 +5,14 @@ import { ContactService } from './contact.service';
 describe('ContactController', () => {
   let controller: ContactController;
 
+  const mockService = {
+    create: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ContactController],
-      providers: [ContactService],
+      providers: [{ provide: ContactService, useValue: mockService }],
     }).compile();
 
     controller = module.get<ContactController>(ContactController);
