@@ -74,6 +74,26 @@ export class PostsController {
     return this.postsService.create(createPostDto, authorId, image);
   }
 
+  @Get('search')
+  @ApiOperation({ summary: 'Search posts' })
+  @ApiResponse({ status: 200, description: 'Return search results' })
+  search(@Query('q') query: string) {
+    return this.postsService.search(query);
+  }
+
+  @Post(':id/like')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.admin, Role.author, Role.reader)
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Toggle like on a post' })
+  @ApiResponse({ status: 200, description: 'Like toggled' })
+  toggleLike(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.postsService.toggleLike(id, user.id);
+  }
+
   @Get()
   @ApiOperation({ summary: 'Get all posts' })
   @ApiResponse({ status: 200, description: 'Return all posts' })

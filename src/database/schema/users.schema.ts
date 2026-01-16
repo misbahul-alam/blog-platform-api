@@ -10,7 +10,7 @@ import {
   varchar,
   text,
 } from 'drizzle-orm/pg-core';
-import { posts, comments, bookmarks } from './schema';
+import { posts, comments, bookmarks, postLikes, commentLikes } from './schema';
 export const roleEnum = pgEnum('role', ['admin', 'author', 'reader']);
 export const users = pgTable(
   'users',
@@ -24,6 +24,8 @@ export const users = pgTable(
     bio: text('bio'),
     isVerified: boolean('is_verified').default(false).notNull(),
     password: text('password').notNull(),
+    resetPasswordToken: varchar('reset_password_token', { length: 255 }),
+    resetPasswordExpires: timestamp('reset_password_expires'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at')
       .defaultNow()
@@ -42,4 +44,6 @@ export const userRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
   bookmarks: many(bookmarks),
+  likedPosts: many(postLikes),
+  likedComments: many(commentLikes),
 }));

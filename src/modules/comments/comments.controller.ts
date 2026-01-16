@@ -43,6 +43,18 @@ export class CommentsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post(':id/like')
+  @ApiBearerAuth('token')
+  @ApiOperation({ summary: 'Toggle like on a comment' })
+  @ApiResponse({ status: 200, description: 'Like toggled' })
+  toggleLike(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.commentsService.toggleLike(id, user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiBearerAuth('token')
   @ApiOperation({ summary: 'Update a comment' })

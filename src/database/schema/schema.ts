@@ -5,3 +5,4 @@ export * from './tags.schema';
 export * from './post_tags.schema';
 export * from './comments.schema';
 export * from './bookmarks.schema';
+export * from './likes.schema';

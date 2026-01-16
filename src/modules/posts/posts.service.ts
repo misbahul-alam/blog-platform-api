@@ -9,8 +9,9 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { DRIZZLE } from 'src/database/database.module';
 import type { DrizzleDB } from 'src/database/types/drizzle';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { eq } from 'drizzle-orm';
+import { eq, ilike, or, and } from 'drizzle-orm';
 import { posts } from 'src/database/schema/posts.schema';
+import { postLikes } from 'src/database/schema/likes.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { categories } from 'src/database/schema/categories.schema';
 
@@ -69,6 +70,46 @@ export class PostsService {
       message: 'Post created successfully',
       post: newPost,
     };
+  }
+
+  async search(query: string) {
+    const searchResults = await this.db.query.posts.findMany({
+      where: or(
+        ilike(posts.title, `%${query}%`),
+        ilike(posts.content, `%${query}%`),
+        ilike(posts.excerpt, `%${query}%`),
+      ),
+      with: {
+        category: {
+          columns: { name: true, slug: true },
+        },
+        author: {
+          columns: { firstName: true, lastName: true },
+        },
+      },
+    });
+    return searchResults;
+  }
+
+  async toggleLike(postId: number, userId: number) {
+    const post = await this.db.query.posts.findFirst({
+      where: eq(posts.id, postId),
+    });
+    if (!post) throw new NotFoundException('Post not found');
+
+    const existingLike = await this.db.query.postLikes.findFirst({
+      where: and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)),
+    });
+
+    if (existingLike) {
+      await this.db
+        .delete(postLikes)
+        .where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)));
+      return { message: 'Post unliked', liked: false };
+    } else {
+      await this.db.insert(postLikes).values({ postId, userId });
+      return { message: 'Post liked', liked: true };
+    }
   }
 
   async findAll(paginationDto: PaginationDto) {

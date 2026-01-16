@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { DRIZZLE } from 'src/database/database.module';
-import { users } from 'src/database/schema/users.schema';
+import { users, posts, comments } from 'src/database/schema/schema';
 import type { DrizzleDB } from 'src/database/types/drizzle';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -64,5 +64,48 @@ export class UsersService {
       .returning();
 
     return { message: 'Profile updated successfully', user: updatedUser };
+  }
+
+  async getPublicProfile(id: number) {
+    const user = await this.db.query.users.findFirst({
+      where: eq(users.id, id),
+      columns: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        bio: true,
+        role: true,
+        createdAt: true,
+      },
+      with: {
+        posts: {
+          limit: 5,
+          where: eq(posts.status, 'published'),
+          orderBy: (posts, { desc }) => [desc(posts.createdAt)],
+          columns: { id: true, title: true, slug: true, createdAt: true },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    return user;
+  }
+
+  async getAdminStats() {
+    const [usersCount, postsCount, commentsCount] = await Promise.all([
+      this.db.select({ count: sql<number>`count(*)` }).from(users),
+      this.db.select({ count: sql<number>`count(*)` }).from(posts),
+      this.db.select({ count: sql<number>`count(*)` }).from(comments),
+    ]);
+
+    return {
+      users: Number(usersCount[0].count),
+      posts: Number(postsCount[0].count),
+      comments: Number(commentsCount[0].count),
+    };
   }
 }

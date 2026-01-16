@@ -9,8 +9,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { DRIZZLE } from 'src/database/database.module';
 import type { DrizzleDB } from 'src/database/types/drizzle';
-import { comments, posts } from 'src/database/schema/schema';
-import { eq } from 'drizzle-orm';
+import { comments, posts, commentLikes } from 'src/database/schema/schema';
+import { eq, and } from 'drizzle-orm';
 
 @Injectable()
 export class CommentsService {
@@ -40,6 +40,35 @@ export class CommentsService {
       message: 'Comment created successfully',
       data: comment,
     };
+  }
+
+  async toggleLike(commentId: number, userId: number) {
+    const comment = await this.db.query.comments.findFirst({
+      where: eq(comments.id, commentId),
+    });
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    const existingLike = await this.db.query.commentLikes.findFirst({
+      where: and(
+        eq(commentLikes.commentId, commentId),
+        eq(commentLikes.userId, userId),
+      ),
+    });
+
+    if (existingLike) {
+      await this.db
+        .delete(commentLikes)
+        .where(
+          and(
+            eq(commentLikes.commentId, commentId),
+            eq(commentLikes.userId, userId),
+          ),
+        );
+      return { message: 'Comment unliked', liked: false };
+    } else {
+      await this.db.insert(commentLikes).values({ commentId, userId });
+      return { message: 'Comment liked', liked: true };
+    }
   }
 
   async findAll(postId: number) {

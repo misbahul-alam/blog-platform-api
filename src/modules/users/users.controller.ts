@@ -52,6 +52,22 @@ export class UsersController {
     return this.usersService.updateProfile(user.id, updateUserDto);
   }
 
+  @Get('admin/stats')
+  @Roles(Role.admin)
+  @ApiOperation({ summary: 'Get admin stats' })
+  @ApiResponse({ status: 200, description: 'Return stats' })
+  getAdminStats() {
+    return this.usersService.getAdminStats();
+  }
+
+  @Get('public/:id')
+  @Roles(Role.admin, Role.author, Role.reader)
+  @ApiOperation({ summary: 'Get public profile' })
+  @ApiResponse({ status: 200, description: 'Return user profile' })
+  getPublicProfile(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.getPublicProfile(id);
+  }
+
   @Get()
   @Roles(Role.admin)
   @ApiOperation({ summary: 'Get all users (Admin only)' })

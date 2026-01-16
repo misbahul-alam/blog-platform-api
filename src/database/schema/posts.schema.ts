@@ -9,7 +9,14 @@ import {
   index,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { users, categories, comments, postTags, bookmarks } from './schema';
+import {
+  users,
+  categories,
+  comments,
+  postTags,
+  bookmarks,
+  postLikes,
+} from './schema';
 import { relations } from 'drizzle-orm';
 
 export const postStatusEnum = pgEnum('post_status', [
@@ -62,4 +69,5 @@ export const postRelations = relations(posts, ({ one, many }) => ({
   comments: many(comments),
   tags: many(postTags),
   bookmarks: many(bookmarks),
+  likes: many(postLikes),
 }));

@@ -8,6 +8,13 @@
       "when": 1766416303020,
       "tag": "0000_mushy_sue_storm",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1768557237619,
+      "tag": "0001_bitter_captain_cross",
+      "breakpoints": true
     }
   ]
 }
