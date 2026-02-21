@@ -6,8 +6,10 @@ import { CustomJwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(config: ConfigService) {
-    const secret = config.get<string>('JWT_SECRET');
+  private configService: ConfigService;
+
+  constructor(configService: ConfigService) {
+    const secret = configService.get<string>('JWT_SECRET');
     if (!secret) {
       throw new Error('JWT_SECRET environment variable is not defined');
     }
@@ -17,6 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: secret,
       passReqToCallback: false,
     });
+    this.configService = configService;
   }
   async validate(payload: CustomJwtPayload) {
     return {

@@ -42,6 +42,7 @@ This API uses **Bearer Token** authentication.
       },
       'token',
     )
+    .addServer('http://localhost:5000/api/v1', 'Local Development Server')
     .addTag('Authentication', 'User registration, login, and verification')
     .addTag('Users', 'User profile and account management')
     .addTag('Posts', 'Blog posts creation and management')
